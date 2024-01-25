@@ -1,0 +1,86 @@
+<style>
+    .img{
+        width: 95%;
+        height: 95%;
+        object-fit: contain;
+        transition: opacity 0.5s ease;
+    }
+    .img-container{
+        margin-bottom: 15px;
+        border-bottom: thin solid black; 
+        border-radius: 10px;
+        background-color: white;
+    }
+    .img-container-disabled{
+        margin-bottom: 15px;
+        border-bottom: thin solid black; 
+        border-radius: 10px;
+        background-color: #CCCCCC;
+    }
+    .img-container:hover .img{
+        opacity: 0.5;
+    }
+    .delete-button{
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+    .delete-icon{
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: black;
+    }
+    .img-container:hover .delete-icon,
+    .img-container:hover .delete-button{
+        display: block;
+    }
+    .frame{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+
+<div class="form">
+    <div class="mx-2">
+        <div class="row" style="height: 100%;">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <div class="{% if disabled %}img-container-disabled{% else %}img-container{% endif %} row">
+                    <div class="col-2" style="display: flex; justify-content: center; align-items: center;">
+                        <span>
+                            <i class="fa fa-image"></i>
+                        </span>
+                    </div>
+                    <div class="col-10 frame">
+                        <div style="position: relative;">
+                            <form action="{{delete_url}}" method="post" id="deleteImgForm">
+                                {% csrf_token %}
+                                <img class="img" src="{{MEDIA_URL}}{{image_url}}" {% if alt %}alt="{{alt}}"{% endif %}>
+                                {% include 'components/icon-button.html' with anchor=True icon='delete-icon fa fa-trash' class='delete-button' url='#' %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const deleteImgBtn = document.querySelector('.delete-button');
+    const deleteImgForm = document.querySelector('#deleteImgForm');
+
+    deleteImgBtn.addEventListener('click', function(){
+        deleteImgForm.submit();
+    });
+</script>

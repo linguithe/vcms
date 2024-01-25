@@ -1,0 +1,18 @@
+<style>
+    .anchor-as-button{
+        display: block; 
+        background-color: #FFE97F; 
+        text-align: center;
+        color: black;
+        text-decoration: none;
+        border-radius: 10px;
+        padding: 8px;
+    }
+    .anchor-as-button:hover{
+        background-color: #FFD300;
+    }
+</style>
+
+<a href="{{url}}" class="{% if class %}{{class}}{% else %}anchor-as-button{% endif %}" {% if id %}id="{{id}}"{% endif %} {% if modal_toggle %}data-bs-toggle="modal" data-bs-target="#{{modal_id}}"{% endif %} {% if modal_dismiss %}data-bs-dismiss="modal"{% endif %} {% if hide %}style="display: none;"{% endif %}>
+    {{text}}
+</a>

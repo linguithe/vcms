@@ -1,0 +1,64 @@
+{% extends 'FormBase.html' %}
+
+{% load static %}
+
+{% block width %}100%{% endblock %}
+
+{% block id %}editProfileForm{% endblock %}
+
+{% block action %}{% if form == 'customer' %}{% url 'vcmsapp:profile-customer' customer_id=customer.id %}{% elif form == 'staff' %}{% url 'vcmsapp:profile-staff' staff_id=staff.id %}{% endif %}{% endblock %}
+
+{% block content %}
+    {% if detail == 'customer' %}
+        {% include 'components/input.html' with icon='fa fa-user' id='name' name='name' type='text' placeholder='Name' value=customer.name disabled=True required=True %}
+        {% include 'components/input.html' with icon='fa fa-at' type='email' id='email' name='email' placeholder='Username (Email)' value=user.email disabled=True required=True div_id='emailDiv' %}
+        {% with options='<option selected disabled hidden value="">Gender</option><option value="Male">Male</option><option value="Female">Female</option>' %}
+            {% include 'components/input.html' with icon='fa fa-venus-mars' type='select' id='gender' name='gender' disabled=True required=True %}
+        {% endwith %}
+        {% include 'components/input.html' with icon='fa fa-phone' type='text' id='phone' name='phone' placeholder='Phone Number' value=customer.phone disabled=True required=True %}
+        {% include 'components/input.html' with icon='fa fa-home' type='text' id='address' name='address' placeholder='Address' value=customer.address disabled=True required=True %}
+        {% include 'components/input.html' with icon='fa fa-calendar' type='date' id='dob' name='dob' placeholder='Date of Birth' value=customer.dob disabled=True required=True %}
+
+        <script src="{% static 'js/default_selected.js' %}"></script>
+        <script src="{% static 'js/field_validators.js' %}"></script>
+        <script>
+            var genderDefaultValue = '{{customer.gender|escapejs}}';
+            var genderSelectId = 'gender';
+
+            default_selected(genderDefaultValue, genderSelectId);
+            validate_name();
+            validate_dob();
+            validate_phone();
+        </script>
+        
+    {% elif detail == 'staff' %}
+        {% include 'components/input.html' with icon='fa fa-user-tie' id='staff_no' name='staff_no' type='text' value=staff.staff_no disabled=True div_id='staffNoDiv' %}
+        {% include 'components/input.html' with icon='fa fa-envelope' id='email' name='email' type='email' placeholder='Email' value=user.email disabled=True required=True div_id='emailDiv' %}
+        {% include 'components/input.html' with icon='bi bi-alphabet' id='name' name='name' type='text' placeholder='Name' value=staff.name disabled=True required=True %}
+        {% with options='<option selected disabled hidden value="">Gender</option><option value="Male">Male</option><option value="Female">Female</option>' %}
+            {% include 'components/input.html' with icon='fa fa-venus-mars' type='select' id='gender' name='gender' disabled=True required=True %}
+        {% endwith %}
+        {% if staff.role == 'Admin' %}
+            {% with options='<option selected disabled hidden value="">Role</option><option value="Doctor">Doctor</option><option value="Groomer">Groomer</option><option value="Admin">Admin</option>' %}
+                {% include 'components/input.html' with icon='fa fa-id-badge' id='role' name='role' type='select' disabled=True required=True %}
+            {% endwith %}
+        {% else %}
+            {% with options='<option selected disabled hidden value="">Role</option><option value="Doctor">Doctor</option><option value="Groomer">Groomer</option>' %}
+                {% include 'components/input.html' with icon='fa fa-id-badge' id='role' name='role' type='select' disabled=True required=True %}
+            {% endwith %}
+        {% endif %}
+
+        <script src="{% static 'js/default_selected.js' %}"></script>
+        <script src="{% static 'js/field_validators.js' %}"></script>
+        <script>
+            var genderDefaultValue = '{{staff.gender|escapejs}}';
+            var genderSelectId = 'gender';
+            var roleDefaultValue = '{{staff.role|escapejs}}';
+            var roleSelectId = 'role';
+
+            default_selected(genderDefaultValue, genderSelectId);
+            default_selected(roleDefaultValue, roleSelectId);
+            validate_name();
+        </script>
+    {% endif %}
+{% endblock %}

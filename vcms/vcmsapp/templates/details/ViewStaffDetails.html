@@ -1,0 +1,33 @@
+{% extends 'FormBase.html' %}
+
+{% load static %}
+
+{% block width %}100%{% endblock %}
+
+{% block id %}editStaffForm{% endblock %}
+
+{% block action %}{% url 'vcmsapp:view-staff' staff_id=view_staff.id admin_id=admin.id %}{% endblock %}
+
+{% block content %}
+    {% include 'components/input.html' with icon='fa fa-user-tie' id='staff_no' div_id='staffNoDiv' name='staff_no' type='text' value=view_staff.staff_no disabled=True required=True %}
+    {% include 'components/input.html' with icon='fa fa-envelope' id='email' name='email' type='email' value=view_staff.email disabled=True required=True %}
+    {% include 'components/input.html' with icon='bi bi-alphabet' id='name' name='name' type='text' value=view_staff.name disabled=True required=True %}
+    {% with options='<option value="Male">Male</option><option value="Female">Female</option>' %}
+        {% include 'components/input.html' with icon='fa fa-venus-mars' type='select' id='gender' name='gender' disabled=True required=True %}
+    {% endwith %}
+    {% with options='<option value="Doctor">Doctor</option><option value="Groomer">Groomer</option><option value="Admin">Admin</option>' %}
+        {% include 'components/input.html' with icon='fa fa-id-badge' id='role' name='role' type='select' disabled=True required=True %}
+    {% endwith %}
+
+    <script src="{% static 'js/default_selected.js' %}"></script>
+    <script>
+        var genderDefaultValue = '{{view_staff.gender|escapejs}}';
+        var genderSelectId = 'gender';
+
+        var roleDefaultValue = '{{view_staff.role|escapejs}}';
+        var roleSelectId = 'role';
+
+        default_selected(genderDefaultValue, genderSelectId);
+        default_selected(roleDefaultValue, roleSelectId);
+    </script>
+{% endblock %}

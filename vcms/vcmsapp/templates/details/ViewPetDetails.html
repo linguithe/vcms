@@ -1,0 +1,17 @@
+{% extends 'FormBase.html' %}
+
+{% block width %}100%{% endblock %}
+
+{% block id %}editPetForm{% endblock %}
+
+{% block action %}{% url 'vcmsapp:view-pet' staff_id=staff.id admin_id=admin.id %}{% endblock %}
+
+{% block content %}
+    {% include 'components/input.html' with icon='bi bi-alphabet' id='name' name='name' type='text' value=pet.name disabled=True required=True %}
+    {% include 'components/input.html' with icon='fa fa-paw' id='animal' name='animal' type='text' value=pet.animal disabled=True required=True %}
+    {% include 'components/input.html' with icon='fa fa-dna' id='species' name='species' type='text' value=pet.species disabled=True required=True %}
+    {% include 'components/input.html' with icon='fa fa-venus-mars' id='gender' name='gender' type='text' value=pet.gender disabled=True required=True %}
+    {% include 'components/input.html' with icon='fa fa-comment-medical' id='description' name='description' type='textarea' rows='4' value=pet.description disabled=True %}
+
+    {% include 'components/input.html' with type='hidden' id='filename' name='filename' %}
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'FormBase.html' %}
+
+{% load static %}
+
+{% block width %}100%{% endblock %}
+
+{% block id %}editAppointmentForm{% endblock %}
+
+{% block action %}{% if detail == 'customer' %}{% url 'vcmsapp:view-appointment-customer' appointment_id=appointment.id customer_id=customer.id %}{% elif detail == 'staff' %}{% url 'vcmsapp:view-appointment-staff' appointment_id=appointment.id staff_id=staff.id %}{% endif %}{% endblock %}
+
+{% block content %}
+    {% if detail == 'customer' %}
+        {% include 'components/input.html' with icon='fa fa-paw' id='pet_name' name='pet_name' type='select' dynamic=True options=pets required=True onLoadText='Select Pet' disabled=True %}
+        {% include 'components/input.html' with icon='bi bi-calendar-date' id='date' name='date' type='date' value=appointment.date required=True onLoadText='Select Date' disabled=True div_id='dateDiv' %}
+        {% include 'components/input.html' with icon='bi bi-clock' id='time' name='time' value=appointment.start_time required=True onLoadText='Select Time' disabled=True div_id='timeDiv' %}
+        {% include 'components/input.html' with icon='bi bi-clipboard2-pulse' id='type' name='type' type='text' required=True value=appointment.type disabled=True div_id='typeDiv' %}
+        {% include 'components/input.html' with icon='fa fa-stethoscope' id='staff_name' name='staff_name' type='text' dynamic=True value=appointment.staff required=True disabled=True div_id='staffNameDiv' %}
+        {% include 'components/input.html' with icon='fa fa-comment-medical' id='description' name='description' type='textarea' placeholder='' value=appointment.description disabled=True %}
+
+        {% include 'components/input.html' with type='hidden' id='pet' name='pet' value=appointment.pet.id %}
+        {% include 'components/input.html' with type='hidden' id='staff' name='staff' value=appointment.staff.id %}
+        
+        <script src="{% static 'js/default_selected.js' %}"></script>
+        <script>
+            var petDefaultValue = '{{appointment.pet|escapejs}}';
+            var petSelectId = 'pet_name';
+
+            default_selected(petDefaultValue, petSelectId);
+
+            document.getElementById('type').addEventListener('change', function() {
+                var appointmentType = this.value;
+                fetch('/get-staff/?type=' + appointmentType)
+                    .then(response => response.json())
+                    .then(data => {
+                        var staffSelect = document.getElementById('staff');
+                        data.staff.forEach(function(s) {
+                            var option = document.createElement('option');
+                            option.value = s.id;
+                            option.text = s.name;
+                            staffSelect.appendChild(option);
+                        });
+                    });
+            });
+
+            document.getElementById('date').addEventListener('change', function() {
+                var appointmentDate = this.value;
+                fetch('/get-slots/?date=' + appointmentDate)
+                    .then(response => response.json())
+                    .then(data => {
+                        var slotSelect = document.getElementById('time');
+                        data.slots.forEach(function(slot) {
+                            var option = document.createElement('option');
+                            option.value = slot.id;
+                            option.text = slot.time;
+                            slotSelect.appendChild(option);
+                        });
+                    });
+            });
+        </script>
+    {% elif detail == 'staff' %}
+        {% include 'components/input.html' with icon='fa fa-user' id='customer_name' name='customer_name' type='text' dynamic=True required=True value=appointment.customer disabled=True div_id='customerNameDiv' %}
+        {% include 'components/input.html' with icon='fa fa-paw' id='pet_name' name='pet_name' type='select' dynamic=True options=pets required=True onLoadText='Select Pet' disabled=True %}
+        {% include 'components/input.html' with icon='bi bi-calendar-date' id='date' name='date' type='date' value=appointment.date required=True onLoadText='Select Date' disabled=True div_id='dateDiv' %}
+        {% include 'components/input.html' with icon='bi bi-clock' id='time' name='time' type='text' value=appointment.start_time required=True onLoadText='Select Time' disabled=True div_id='timeDiv' %}
+        {% include 'components/input.html' with icon='bi bi-clipboard2-pulse' id='type' name='type' type='text' required=True value=appointment.type disabled=True div_id='typeDiv' %}
+        {% include 'components/input.html' with icon='bi bi-chat-dots' id='description' name='description' type='textarea' value=appointment.description disabled=True %}
+
+        {% include 'components/input.html' with type='hidden' id='customer' name='customer' value=appointment.customer.id %}
+        {% include 'components/input.html' with type='hidden' id='pet' name='pet' value=appointment.pet.id %}
+        
+        <script src="{% static 'js/default_selected.js' %}"></script>
+        <script>
+            var petDefaultValue = '{{appointment.pet|escapejs}}';
+            var petSelectId = 'pet_name';
+
+            default_selected(petDefaultValue, petSelectId);
+
+            document.getElementById('type').addEventListener('change', function() {
+                var appointmentType = this.value;
+                fetch('/get-staff/?type=' + appointmentType)
+                    .then(response => response.json())
+                    .then(data => {
+                        var staffSelect = document.getElementById('staff');
+                        data.staff.forEach(function(s) {
+                            var option = document.createElement('option');
+                            option.value = s.id;
+                            option.text = s.name;
+                            staffSelect.appendChild(option);
+                        });
+                    });
+            });
+
+            document.getElementById('date').addEventListener('change', function() {
+                var appointmentDate = this.value;
+                fetch('/get-slots/?date=' + appointmentDate)
+                    .then(response => response.json())
+                    .then(data => {
+                        var slotSelect = document.getElementById('time');
+                        data.slots.forEach(function(slot) {
+                            var option = document.createElement('option');
+                            option.value = slot.id;
+                            option.text = slot.time;
+                            slotSelect.appendChild(option);
+                        });
+                    });
+            });
+        </script>
+    {% endif %}
+{% endblock %}

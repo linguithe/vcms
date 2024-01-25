@@ -1,0 +1,42 @@
+{% extends 'Base.html' %}
+
+{% block title %}Add Slot | {{date}}{% endblock %}
+
+{% block content %}
+<div class="row" style="padding: 0%; height: fit-content;">
+    <div class="row mb-3" style="margin-left: auto;">
+        <h1 style="font-weight: bold;">
+            Add Slot | {{date}}
+        </h1>
+        <hr style="border-top: thin solid lightgrey; opacity: 0.2;">
+    </div>
+</div>
+<div class="row mb-3" style="height: fit-content; width: 100%; margin-left: auto;">
+    <div class="col-3"></div>
+    <div class="col-6">
+        {% include 'forms/AddSlotForm.html' %}
+    </div>
+</div>
+<div class="row" style="height: fit-content; width: 100%; margin-left: auto;">
+    <div class="col-3"></div>
+    <div class="col-3">
+        {% url 'vcmsapp:slot' staff_id=staff.id as url %}
+        {% include 'components/anchor-button.html' with url=url text="Back" %}
+    </div>
+    <div class="col-3">
+        <button type="submit" style="border-radius: 10px;" id="submitBtn">Add Slot</button>
+    </div>
+</div>
+
+<script>
+    var submitBtn = document.getElementById('submitBtn');
+    var form = document.getElementById('addSlotForm');
+    
+    submitBtn.addEventListener('click', function() {
+        if (form.reportValidity()) {
+            form.submit();
+        }
+    });
+
+</script>
+{% endblock %}

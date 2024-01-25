@@ -1,0 +1,99 @@
+<style>
+    .form-group{
+        margin-bottom: 15px;
+        border-bottom: thin solid black; 
+        border-radius: 10px; 
+        background-color: white;
+    }
+    .form-group-disabled{
+        margin-bottom: 15px;
+        border-bottom: thin solid black; 
+        border-radius: 10px; 
+        background-color: #CCCCCC;
+    }
+    .form-group input,
+    .form-group input[type="button"],
+    .form-group select,
+    .form-group textarea{
+        width: 100%;
+        padding: 8px;
+        border: none;
+        background-color: white;
+    }
+    .form-group-disabled input,
+    .form-group-disabled input[type="button"],
+    .form-group-disabled select,
+    .form-group-disabled textarea{
+        width: 100%;
+        padding: 8px;
+        border: none;
+        background-color: #CCCCCC;
+    }
+</style>
+
+{% if type != 'hidden' %}
+<div class="{% if disabled %}form-group-disabled{% else %}form-group{% endif %} row" id="{{div_id}}">
+    <div class="col-2" style="display: flex; justify-content: center; align-items: center;">
+        <span>
+            <i class="{{icon}}"></i>
+        </span>
+    </div>
+    <div class="col-10" style="display: flex;">
+        {% if type == 'select' %}
+        <!-- Select field -->
+        <select 
+            id="{{id}}" 
+            name="{{name}}" 
+            {% if required %}required{% endif %}
+            {% if disabled %}disabled{% endif %}
+        >
+            {% if onLoadText %}
+                <option selected disabled hidden value="">{{onLoadText}}</option>
+            {% endif %}
+            {% if dynamic %}
+                {% for option in options %}
+                    <option value="{% if use_id %}{{option.id}}{% else %}{{option}}{% endif %}">{{option}}</option>
+                {% endfor %}
+            {% else %}
+                {{options|safe}}
+            {% endif %}
+        </select>
+        {% elif type == 'textarea' %}
+        <!-- Textarea field -->
+        <textarea 
+            id="{{id}}" 
+            name="{{name}}" 
+            placeholder="{{placeholder}}"
+            rows="{{rows}}"
+            value="{{value}}"
+            {% if required %}required{% endif %}
+            {% if disabled %}disabled{% endif %}
+        >{{value}}</textarea>
+        {% else %}
+        <!-- Input field -->
+        <input 
+            type="{{type}}" 
+            id="{{id}}" 
+            name="{{name}}" 
+            placeholder="{{placeholder}}"
+            value="{{value}}"
+            {% if required %}required{% endif %}
+            {% if disabled %}disabled{% endif %}
+            {% if accordion_id %}data-bs-toggle="collapse" data-bs-target="#{{accordion_id}}" {% endif %}
+        >
+            {% if type == 'password' %}
+                {% if id == 'password' %}
+                    {% include 'components/icon-button.html' with icon='fa fa-eye' id='show' type='button' title='Show Password' %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% else %}
+<input 
+    type="hidden" 
+    id="{{id}}" 
+    name="{{name}}" 
+    value="{{value}}"
+>
+{% endif %}

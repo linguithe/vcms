@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" xmlns="https://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">
+ 
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="x-apple-disable-message-reformatting">
+    <meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
+    <title></title>
+    <link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet'>
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+ 
+        table,
+        td,
+        div,
+        h1,
+        p {
+            font-family:'Segoe UI';
+            color: #000;
+        }
+ 
+        div.col-sml {
+            font-family: 'Segoe UI';
+            font-size: 14px;
+        }
+    </style>
+</head>
+ 
+<body style="margin:0;padding:0;word-spacing:normal;">
+<div role="article" aria-roledescription="email" lang="en"
+     style="text-size-adjust:100%;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+    <table role="presentation" style="width:100%;border:none;border-spacing:0;">
+        <tr>
+            <td align="center" style="padding:0;">
+                <table role="presentation"
+                       style="width:100%;max-width:600px;border:none;border-spacing:0;font-family:Arial,sans-serif;font-size:16px;line-height:22px;color:#ffffff;">
+                    <tr>
+                        <td style="padding:16px 32px;font-size:24px;font-weight:bold;background-color:#ffffff">
+                            <img src="cid:logo" alt=""
+                                style="width:80%;max-width:154px;height:auto;border:none;text-decoration:none;color:#ffffff;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:16px 32px;font-size:24px;font-weight:bold;background-color:#FFD300">
+                            {% block content %}
+                            {% endblock %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:15px 30px;font-size:0;background-color:#FFD300;">
+                            <div class="col-sml"
+                                style="display:inline-block;width:100%;max-width:270px;vertical-align:top;text-align:left;">
+                                <p style="line-height:1.5;margin:0px;">
+                                    <b style="color:black;">Petficionado</b><br>
+                                    <label>Call Center</label>: +603-12345678 <br><br>
+                                 </p>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+ 
+</html>

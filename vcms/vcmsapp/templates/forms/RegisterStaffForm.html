@@ -1,0 +1,27 @@
+{% extends 'FormBase.html' %}
+
+{% load static %}
+
+{% block width %}100%{% endblock %}
+
+{% block id %}registerStaffForm{% endblock %}
+
+{% block content %}
+    {% include 'components/input.html' with icon='fa fa-user-tie' id='generatedStaffNo' name='generatedStaffNo' type='text' value=next_staff_no disabled=True %}
+    {% include 'components/input.html' with icon='bi bi-alphabet' id='name' name='name' type='text' placeholder='Name' required=True %}
+    {% with options='<option selected disabled hidden value="">Gender</option><option value="Male">Male</option><option value="Female">Female</option>' %}
+        {% include 'components/input.html' with icon='fa fa-venus-mars' type='select' id='gender' name='gender' required=True %}
+    {% endwith %}
+    {% with options='<option selected disabled hidden value="">Role</option><option value="Doctor">Doctor</option><option value="Groomer">Groomer</option>' %}
+        {% include 'components/input.html' with icon='fa fa-id-badge' id='role' name='role' type='select' required=True %}
+    {% endwith %}
+    {% include 'components/input.html' with icon='fa fa-envelope' id='email' name='email' type='email' placeholder='Email' required=True %}
+    {% include 'components/input.html' with icon='fa fa-lock' id='generatedPassword' name='generatedPassword' type='text' value=next_staff_password disabled=True %}
+    {% include 'components/input.html' with type='hidden' id='password' name='password' value=next_staff_password %}
+    {% include 'components/input.html' with type='hidden' id='staff_no' name='staff_no' value=next_staff_no %}
+
+    <script src="{% static 'js/field_validators.js' %}"></script>
+    <script>
+        validate_name();
+    </script>
+{% endblock %}

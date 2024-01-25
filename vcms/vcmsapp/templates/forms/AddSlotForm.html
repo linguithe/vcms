@@ -1,0 +1,19 @@
+{% extends 'FormBase.html' %}
+
+{% load static %}
+
+{% block width %}100%{% endblock %}
+
+{% block id %}addSlotForm{% endblock %}
+
+{% block action %}{% url 'vcmsapp:add-slot' staff_id=staff.id %}{% endblock %}
+
+{% block content %}
+    {% include 'components/input.html' with icon='fa fa-hourglass-start' id='start_time' name='start_time' type='time' value='' required=True %}
+    {% include 'components/input.html' with icon='fa fa-hourglass-end' id='end_time' name='end_time' type='time' value='' required=True %}
+    {% include 'components/input.html' with icon='bi bi-clipboard2-pulse' id='type' name='type' type='select' dynamic=True options=types required=True onLoadText='Select Appointment Type' %}
+    <script src="{% static 'js/field_validators.js' %}"></script>
+    <script>
+        validate_time();
+    </script>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'LoginBase.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="login-form">
+    <div class="mx-2">
+        <div class="row" style="height: 100%;">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <h2>Login</h2><br>
+                <form method="post">
+                    {% csrf_token %}
+                    {% include 'components/input.html' with icon='fa fa-at' type='email' id='email' name='email' placeholder='Username (Email)' value='' required=True %}
+                    {% include 'components/input.html' with icon='fa fa-lock' type='password' id='password' name='password' placeholder='Password' value='' required=True icon_id='eye' %}
+                    <br>
+                    <div class="mb-3">
+                        <button type="submit" style="border-radius: 10px;">Login</button>
+                    </div>
+                    <div class="my-2">
+                        <label style="font-size: smaller;">
+                            New to Petficionado? Create an account now!
+                        </label>
+                    </div>
+                    <div>
+                        {% url 'vcmsapp:register' as url %}
+                        {% include 'components/anchor-button.html' with url=url text='Register' %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const show = document.getElementById('show');
+    const password = document.getElementById('password');
+
+    if (show) {
+        show.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            const eye = document.getElementById('eye');
+            if (password.type === 'password') {
+                password.type = 'text';
+                eye.classList.remove('fa-eye');
+                eye.classList.add('fa-eye-slash');
+                eye.title = 'Hide Password';
+            } else {
+                password.type = 'password';
+                eye.classList.remove('fa-eye-slash');
+                eye.classList.add('fa-eye');
+                eye.title = 'Show Password';
+            }
+        });
+    }
+</script>
+{% endblock %}

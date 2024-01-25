@@ -1,0 +1,329 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+    <link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Open Sans' rel='stylesheet'>
+
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.css" integrity="sha512-6S2HWzVFxruDlZxI3sXOZZ4/eJ8AcxkQH1+JjSe/ONCEqR9L4Ysq5JdT5ipqtzU7WHalNwzwBv+iE51gNHJNqQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.css" integrity="sha512-oe8OpYjBaDWPt2VmSFR+qYOdnTjeV9QPLJUeqZyprDEQvQLJ9C5PCFclxwNuvb/GQgQngdCXzKSFltuHD3eCxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.4/toastr.min.js" integrity="sha512-lbwH47l/tPXJYG9AcFNoJaTMhGvYWhVM9YI43CT+uteTRRaiLCui8snIgyAN8XWgNjNhCqlAUdzZptso6OCoFQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="{% static 'dropzone/dropzone.css' %}" />
+    <script src="{% static 'dropzone/dropzone.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    
+    <style>
+        *{
+            font-family: 'Open Sans';
+        }
+        body{
+            background-color: #FFD300;
+            overflow-x: hidden;
+            overflow-y: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar{
+            height: 100vh;
+            padding: 0%;
+        }
+        .nav{
+            top: 5%;
+            padding-left: 15%;
+            background-color: transparent;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .nav-item{
+            list-style-type: none;
+        }
+        .nav-link{
+            display: flex;
+            border-radius: 50%;
+            text-decoration: none;
+            color: black;
+            height: 60px;
+            width: 60px;
+            font-size: 2.5vw;
+            justify-content: center;
+            align-items: center;
+        }
+        .nav-link:hover{
+            background-color: white;
+            color: black;
+        }
+        .nav-link:focus{
+            color: black;
+        }
+        .selected{
+            display: flex;
+            border-radius: 50%;
+            text-decoration: none;
+            background-color: white;
+            color: black;
+            height: 60px;
+            width: 60px;
+            font-size: 2.5vw;
+            justify-content: center;
+            align-items: center;
+        }
+        .content{
+            padding: 0%;
+            height: 100vh;
+            background-color: white;
+            border-radius: 15px 0px 0px 15px;
+            overflow: hidden;
+        }
+
+        /* Table */
+        .table{
+            height: fit-content;
+        }
+        .table-striped > tbody > tr:nth-child(2n+1) > td, 
+        .table-striped > tbody > tr:nth-child(2n+1) > th{
+            background-color: #FFF7D0;
+        }
+        .table-striped > thead > tr{
+            border-bottom: thin solid lightgray;
+        }
+        .table-striped > tbody > tr{
+            border-top: thin solid lightgray;
+            border-bottom: thin solid lightgray;
+            border-left: none;
+            border-right: none;
+        }
+
+        /* Button */
+        .button{
+            background-color: #FFE97F;
+            text-align: center;
+            color: black;
+            border-radius: 10px;
+            padding: 8px;
+            border-color: transparent;
+        }
+        .button:hover{
+            background-color: #FFD300;
+        }
+
+        /* Anchor as Button */
+        .anchor-as-button{
+            display: block; 
+            background-color: #FFE97F; 
+            text-align: center;
+            color: black;
+            text-decoration: none;
+            border-radius: 10px;
+            padding: 8px;
+        }
+        .anchor-as-button:hover{
+            background-color: #FFD300;
+        }
+
+        /* Icon button using button element */
+        .icon-button{
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* Modal */
+        .btn-close:focus{
+            box-shadow: none;
+        }
+
+        /* Form container for multiple forms */
+        .form-container{
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #E5E5E5;
+        }
+
+        /* Logo animation */
+        @keyframes logo-animation{
+            0%{
+                transform: translateX(-100%);
+            }
+            100%{
+                transform: translateX(0);
+            }
+        }
+        .logo-animation{
+            animation: logo-animation 1.5s forwards;
+        }
+
+        /* Slogan animation */
+        @keyframes gradient-wipe{
+            0%{
+                transform: translateX(-100%);
+            }
+            100%{
+                transform: translateX(0);
+            }
+        }
+        .slogan-animation{
+            animation: gradient-wipe 2s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="row" style="height: 100vh;">
+        <div class="col-1 sidebar position-sticky d-flex flex-column justify-content-between">
+            <div style="flex-grow: 1;">
+                <ul class="nav flex-column">
+                    {% if customer %}
+                        <li class="nav-item my-3">
+                            <a class="{% if onPage == 'Appointments' %}selected{% else %}nav-link{% endif %}" href="{% url 'vcmsapp:customer' customer_id=customer.id %}" title="Appointments">
+                                <i class="fa fa-calendar"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item my-3">
+                            <a class="{% if onPage == 'History' %}selected{% else %}nav-link{% endif %}" href="{% url 'vcmsapp:history' customer_id=customer.id %}" title="History">
+                                <i class="fa fa-clock"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item my-3">
+                            <a class="{% if onPage == 'Pets' %}selected{% else %}nav-link{% endif %}" href="{% url 'vcmsapp:pet' customer_id=customer.id %}" title="Pets">
+                                <i class="fa fa-paw"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item my-3">
+                            <a class="{% if onPage == 'Adopt' %}selected{% else %}nav-link{% endif %}" href="{% url 'vcmsapp:adopt' %}" title="Adopt-A-Pet">
+                                <i class="fa fa-hand-holding-heart"></i>
+                            </a>
+                        </li>
+                    {% elif staff %}
+                        <li class="nav-item my-3">
+                            <a class="{% if onPage == 'Appointments' %}selected{% else %}nav-link{% endif %}" href="{% url 'vcmsapp:staff' staff_id=staff.id %}" title="Appointments">
+                                <i class="fa fa-calendar"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item my-3">
+                            <a class="{% if onPage == 'Slots' %}selected{% else %}nav-link{% endif %}" href="{% url 'vcmsapp:slot' staff_id=staff.id %}" title="Slots">
+                                <i class="fa fa-user-clock"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item my-3">
+                            <a class="{% if onPage == 'Adopt' %}selected{% else %}nav-link{% endif %}" href="{% url 'vcmsapp:adopt' %}" title="Adopt-A-Pet">
+                                <i class="fa fa-hand-holding-heart"></i>
+                            </a>
+                        </li>
+                    {% elif admin %}
+                        <li class="nav-item my-3">
+                            <a class="{% if onPage == 'Staff' %}selected{% else %}nav-link{% endif %}" href="{% url 'vcmsapp:admin' admin_id=admin.id %}" title="Staff">
+                                <i class="fa fa-user-tie"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item my-3">
+                            <a class="{% if onPage == 'Customer' %}selected{% else %}nav-link{% endif %}" href="{% url 'vcmsapp:approve-customer' admin_id=admin.id %}" title="Pending Customers">
+                                <i class="fa fa-user"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div style="padding-bottom: 1rem;">
+                <ul class="nav flex-column">
+                    <li class="nav-item my-3">
+                        <a class="{% if onPage == 'Profile' %}selected{% else %}nav-link{% endif %}" href="{% if customer %}{% url 'vcmsapp:profile-customer' customer_id=customer.id %}{% elif staff %}{% url 'vcmsapp:profile-staff' staff_id=staff.id %}{% elif admin %}{% url 'vcmsapp:profile-staff' staff_id=admin.id %}{% endif %}" title="Profile">
+                            <i class="fa fa-circle-user"></i>
+                        </a>
+                    </li>
+                    <!-- {% if not admin %}
+                    <li class="nav-item my-3">
+                        <a class="{% if onPage == 'Notifications' %}selected{% else %}nav-link{% endif %}" href="{% if customer %}{% url 'vcmsapp:notification-customer' customer_id=customer.id %}{% else %}{% url 'vcmsapp:notification-staff' staff_id=staff.id %}{% endif %}" title="Notifications">
+                            <i class="fa fa-bell"></i>
+                        </a>
+                    </li>
+                    {% endif %} -->
+                    <li class="nav-item my-3">
+                        <a class="nav-link" data-bs-toggle="modal" data-bs-target="#logoutModal" href="#" title="Logout">
+                            <i class="fa fa-arrow-right-from-bracket"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-11 content" style="overflow-y: scroll;">
+            <div class="row mb-4" style="height: 15vh; padding-left: 5%; padding-right: 5%;">
+                <div class="col-6">
+                    <img class="logo-animation" src="{% static 'Logos/logo_with_text_side.png' %}" alt="Petficionado" style="width: 100%; height: 100%;">
+                </div>
+                <div class="col-6 d-flex justify-content-center align-items-center">
+                    <p class="mx-2 my-2" style="
+                        font-size: 24px; 
+                        font-family: Garamond;
+                        text-align: center;
+                        background-color: white;
+                        border-radius: 10px;
+                        padding: 20px;
+                        position: relative;
+                        overflow: hidden;
+                    ">To provide protection and affection.
+                        <span class="slogan-animation" style="
+                            background: linear-gradient(to left, #FFD300, rgba(255, 211, 0, 0));
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            transform: translateX(-100%);
+                            opacity: 0.5;
+                        "></span>
+                    </p>
+                </div>
+            </div>
+            <hr class="mb-4" style="border-bottom: thin solid lightgray;">
+            <div class="row" style="height: 85vh; padding-left: 5%; padding-right: 5%; top: 5%;">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    {% if messages %}
+        {% for message in messages %}
+            <script type=text/javascript>toastr.{{ message.tags }}('{{ message }}')</script>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="logoutModalLabel">Logout Confirmation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure to logout?</h4>
+            </div>
+            <div class="modal-footer">
+                <div class="row" style="width: 100%;">
+                    <div style="display: flex; justify-content: center;">
+                        <div class="col-5 mx-2">
+                            {% include 'components/anchor-button.html' with url='#' text='Back' modal_dismiss=True %}
+                        </div>
+                        <div class="col-5 mx-2">
+                            {% url 'vcmsapp:logout' as url %}
+                            {% include 'components/anchor-button.html' with url=url text='Logout' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</body>
+</html>

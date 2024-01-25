@@ -1,0 +1,12 @@
+{% extends 'FormBase.html' %}
+
+{% block width %}100%{% endblock %}
+
+{% block id %}viewNotesForm{% endblock %}
+
+{% block action %}#{% endblock %}
+
+{% block content %}
+    {% include 'components/input.html' with icon='fa fa-file-prescription' id='notes' name='notes' type='textarea' value=notes rows='4' disabled=True %}
+    {% include 'components/input.html' with icon='fa fa-pills' id='prescription' name='prescription' type='textarea' value=prescription rows='4' disabled=True %}
+{% endblock %}

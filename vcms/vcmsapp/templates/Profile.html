@@ -1,0 +1,176 @@
+{% extends 'Base.html' %}
+
+{% block title %}Profile | {{user.email}}{% endblock %}
+
+{% block content %}
+<style>
+    .container{
+        display: flex;
+        width: 100%;
+        padding: 0;
+        justify-content: center;
+        align-items: center;
+    }
+    .choice{
+        height: 100%;
+        box-sizing: border-box;
+        padding: 0;
+        overflow: hidden;
+        float: left;
+        align-items: center;
+        transition: width 1s;
+        border-radius: 10px;
+        text-decoration: none;
+        justify-content: center;
+        display: flex;
+    }
+    .expand{
+        width: 65%;
+        transition: font-size 0.5s;
+    }
+    .unset{
+        width: 5%;
+        color: black !important;
+        background-color: #FFE97F !important;
+        font-size: 0 !important;
+    }
+    .small{
+        width: 5% !important;
+        background-color: #FFE97F !important;
+        font-size: 0 !important;
+    }
+    .small > div{
+        opacity: 0;
+    }
+    .small > a{
+        content: " ";
+    }
+    .unset > div{
+        transition: width 2s;
+    }
+    .unset > div > p{
+        opacity: 0;
+    }
+    .expand > div {
+        transition: width 500ms;
+        opacity: 1;
+    }
+    .expand:hover{
+        background-color: #FFD300;
+    }
+</style>
+<div class="row" style="padding: 0%; height: fit-content;">
+    <div class="row mb-3" style="margin-left: auto;">
+        <div class="col-6">
+            <h1 style="font-weight: bold;">
+                Account Information
+            </h1>
+        </div>
+        <div class="col-6 row">
+            <div class="container horizontal-accordion" style="height: 5vh;">
+
+                <div class="card choice expand mx-2" style="background-color: #FFE97F;" id="actions">
+                    <div class="card-body" style="width: 95%;">
+                        <h5 style="font-weight: bolder; margin: 0%; text-align: left;">Actions <i class="fa fa-angle-right" style="float: right;"></i></h5>
+                    </div>
+                </div>
+                
+
+                {% if customer %}
+                    {% url 'vcmsapp:change-password-customer' customer_id=customer.id as url %}
+                {% elif staff %}
+                    {% url 'vcmsapp:change-password-staff' staff_id=staff.id as url %}
+                {% endif %}
+                {% include 'components/anchor-button.html' with url=url text="Change Password" class='card choice unset mx-2' %}
+
+                {% if customer %}
+                    {% include 'components/anchor-button.html' with url='#' text="Terminate Account" id='deleteBtn' modal_toggle=True modal_id='terminateModal' class='card choice unset mx-2' %}
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr style="border-top: thin solid lightgrey; opacity: 0.2;">
+    <div class="row mb-3" style="height: fit-content; width: 100%; margin-left: auto;">
+        <div class="col-3"></div>
+        <div class="col-6">
+            {% if customer %}
+                {% include 'details/ProfileDetails.html' with detail='customer' %}
+            {% elif staff %}
+                {% include 'details/ProfileDetails.html' with detail='staff' %}
+            {% endif %}
+        </div>
+    </div>
+    {% url 'vcmsapp:return' as url %}
+    {% include 'components/edit-detail-buttons.html' with form_id='editProfileForm' url=url exclude_fields='staffNoDiv,emailDiv' %}
+    
+    {% if customer %}
+    <!-- Modal -->
+    <div class="modal fade" id="terminateModal" tabindex="-1" aria-labelledby="terminateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="terminateModalLabel">Terminate Account Confirmation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Are you sure to terminate your account? This action cannot be reversed.</h4>
+                </div>
+                <div class="modal-footer">
+                    <div class="row" style="width: 100%;">
+                        <div style="display: flex; justify-content: center;">
+                            <div class="col-5 mx-2">
+                                {% include 'components/anchor-button.html' with url='#' text='Back' modal_dismiss=True %}
+                            </div>
+                            <div class="col-5 mx-2">
+                                <form action="{% url 'vcmsapp:terminate-account' customer_id=customer.id %}" method="post" id="terminateAccountForm">
+                                    {% csrf_token %}
+                                    {% include 'components/input.html' with type='hidden' id='customer_id' name='customer_id' value=customer.id %}
+                                    {% include 'components/anchor-button.html' with url='#' text='Terminate Account' id='terminateAccountBtn' %}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+<script>
+    var terminateBtn = document.getElementById('terminateAccountBtn');
+    var form = document.getElementById('terminateAccountForm');
+
+    if (terminateBtn) {
+        terminateBtn.addEventListener('click', function() {
+            if (form.reportValidity()) {
+                form.submit();
+            }
+        });
+    }
+
+    const choiceArray = document.querySelectorAll(".choice");
+    const accordion = document.querySelector(".horizontal-accordion");
+    const actionsCard = document.querySelector("#actions");
+
+    choiceArray.forEach((card) => {
+        card.addEventListener("mouseenter", () => {
+            choiceArray.forEach((element) => {
+                element.classList.remove("expand", "unset");
+                element.classList.add('small');
+            })
+            card.classList.remove("small");
+            card.classList.add('expand');
+        });
+    });
+
+    accordion.addEventListener("mouseleave", () => {
+        choiceArray.forEach((card) => {
+            card.classList.remove("expand", "unset");
+            card.classList.add("small");
+        });
+        actionsCard.classList.remove("small");
+        actionsCard.classList.add("expand");
+    });
+</script>
+{% endblock %}

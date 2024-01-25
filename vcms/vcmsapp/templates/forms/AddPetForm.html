@@ -1,0 +1,18 @@
+{% extends 'FormBase.html' %}
+
+{% block width %}100%{% endblock %}
+
+{% block id %}addPetForm{% endblock %}
+
+{% block action %}{% url 'vcmsapp:add-pet' customer_id=customer.id %}{% endblock %}
+
+{% block content %}
+    {% include 'components/input.html' with icon='bi bi-alphabet' id='name' name='name' type='text' placeholder='Name' value='' required=True %}
+    {% include 'components/input.html' with icon='fa fa-paw' id='animal' name='animal' type='text' placeholder='Animal' value='' required=True %}
+    {% include 'components/input.html' with icon='fa fa-dna' id='species' name='species' type='text' placeholder='Species' value='' required=True %}
+    {% with options='<option selected disabled hidden value="">Gender</option><option value="Male">Male</option><option value="Female">Female</option>' %}
+        {% include 'components/input.html' with icon='fa fa-venus-mars' type='select' id='gender' name='gender' required=True %}
+    {% endwith %}
+    {% include 'components/input.html' with icon='fa fa-pen-nib' id='description' name='description' type='textarea' placeholder='Description' %}
+    {% include 'components/input.html' with type='hidden' id='filename' name='filename' %}
+{% endblock %}

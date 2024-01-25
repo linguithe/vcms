@@ -1,0 +1,126 @@
+{% extends 'Base.html' %}
+
+{% block title %}Add Pet{% endblock %}
+
+{% block content %}
+<div class="row" style="padding: 0%; height: fit-content;">
+    <div class="row mb-3" style="margin-left: auto;">
+        <h1 style="font-weight: bold;">
+            Add Pet
+        </h1>
+        <hr style="border-top: thin solid lightgrey; opacity: 0.2;">
+    </div>
+</div>
+<div class="row mb-3" style="height: fit-content; width: 100%; margin-left: auto;">
+    <div class="col-3"></div>
+    <div class="col-6">
+        <div class="form-container">
+            {% include 'forms/AddPetForm.html' %}
+            <br>
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-10">
+                    <div class="accordion" id="imageUploadAccordion">
+                        <div class="card" style="border-color: #E5E5E5;">
+                            <div class="card-header" id="imageUploadHeading" style="background-color: #E5E5E5; border-color: transparent;">
+                                {% include 'components/input.html' with type='button' value='Upload Pet Image' accordion_id='imageUploadDiv' icon='fa fa-upload' %}
+                            </div>
+                            <div class="collapse" id="imageUploadDiv" aria-labelledby="imageUploadHeading" data-bs-parent="#imageUploadAccordion">
+                                <div class="card-body">
+                                    <form method="post" enctype="multipart/form-data" class="dropzone needsclick" id="imageUpload">
+                                        {% csrf_token %}
+                                        <div class="dz-message needsclick">
+                                            <i class="fa fa-upload"></i>
+                                            <h6 style="font-size: smaller;">Drop files here or click to upload.</h6>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row pb-3" style="height: fit-content; width: 100%; margin-left: auto;">
+    <div class="col-3"></div>
+    <div class="col-3">
+        {% url 'vcmsapp:pet' customer_id=customer.id as url %}
+        {% include 'components/anchor-button.html' with url=url text="Back" %}
+    </div>
+    <div class="col-3">
+        <button type="submit" style="border-radius: 10px;" id="submitBtn">Add Pet</button>
+    </div>
+</div>
+<script>
+    Dropzone.autoDiscover = false;
+
+    var imageUpload = new Dropzone("#imageUpload", {
+        url: "{% url 'vcmsapp:upload-pet-image' customer_id=customer.id %}",
+        paramName: "imageUpload",
+        maxFilesize: 2,
+        maxFiles: 1,
+        acceptedFiles: ".jpeg,.jpg,.png,.gif",
+        addRemoveLinks: true,
+        uploadMultiple: false,
+        dictRemoveFile: "Remove",
+        dictFileTooBig: "Image is larger than 2MB",
+        dictMaxFilesExceeded: "Only 1 image is allowed",
+        init: function() {
+            this.on("success", function(file, response) {
+                document.getElementById('filename').value = response.filename;
+            });
+            this.on("addedfile", function(file) {
+                if (this.files.length > 1) {
+                    this.removeFile(this.files[0]);
+                }
+            });
+            this.on("removedfile", function(file) {
+                $.ajax({
+                    url: "{% url 'vcmsapp:remove-pet-image' customer_id=customer.id %}",
+                    type: "POST",
+                    data: {
+                        csrfmiddlewaretoken: "{{ csrf_token }}",
+                        filename: file.name
+                    },
+                    success: function(response) {
+                        toastr.success('Image removed successfully');
+                    },
+                    error: function(response) {
+                        toastr.error('Image failed to remove');
+                    }
+                })
+
+                if (this.files.length === 0) {
+                    this.emit("reset");
+                }
+            });
+            this.on("maxfilesexceeded", function(file) {
+                this.removeAllFiles();
+                this.addFile(file);
+            });
+        }
+    });
+
+    $(document).ready(function(){
+        $(".card").hover(
+            function(){
+                $(this).find('.collapse').collapse('show');
+            },
+            function(){
+                $(this).find('.collapse').collapse('hide');
+            }
+        )
+    })
+
+    var submitBtn = document.getElementById('submitBtn');
+    var form = document.getElementById('addPetForm');
+
+    submitBtn.addEventListener('click', function() {
+        if (form.checkValidity()) {
+            form.submit();
+        }
+    });
+</script>
+{% endblock %}

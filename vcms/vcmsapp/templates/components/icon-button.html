@@ -1,0 +1,19 @@
+<style>
+    .icon-button{
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        outline: none;
+        color: {% if color %}{{color}}{% else %}black{% endif %};
+    }
+</style>
+
+{% if anchor %}
+    <a href="{{url}}" class="{% if class %}{{class}}{% else %}icon-button{% endif %}" {% if id %}id="{{id}}"{% endif %} {% if modal %}data-bs-toggle="modal" data-bs-target="#{{modal_id}}"{% endif %} {% if dropdown %}data-bs-toggle="dropdown" aria-expanded="false"{% endif %} {% if title %}title="{{title}}"{% endif %}>
+        <i class="{{icon}}" {% if icon_id %}id="{{icon_id}}"{% endif %}></i>
+    </a>
+{% else %}
+    <button class="icon-button" id="{{id}}" type="{{type}}" {% if modal %}data-bs-toggle="modal" data-bs-target="#{{modal_id}}"{% endif %} {% if dropdown %}data-bs-toggle="dropdown" aria-expanded="false"{% endif %} {% if title %}title="{{title}}"{% endif %}>
+        <i class="{{icon}}" {% if icon_id %}id="{{icon_id}}"{% endif %}></i>
+    </button>
+{% endif %}

@@ -1,0 +1,169 @@
+{% extends 'FormBase.html' %}
+
+{% block width %}100%{% endblock %}
+
+{% block id %}makeAppointmentForm{% endblock %}
+
+{% block action %}{% if form == 'customer' %}{% url 'vcmsapp:make-appointment-customer' customer_id=customer.id %}{% elif form == 'staff' %}{% url 'vcmsapp:make-appointment-staff' staff_id=staff.id %}{% endif %}{% endblock %}
+
+{% block content %}
+    {% if form == 'customer' %}
+        {% include 'components/input.html' with icon='fa fa-paw' id='pet' name='pet' type='select' dynamic=True options=pets required=True onLoadText='Select Pet' %}
+        {% include 'components/input.html' with icon='bi bi-clipboard2-pulse' id='type' name='type' type='select' dynamic=True options=types required=True onLoadText='Select Appointment Type' %}
+        {% include 'components/input.html' with icon='fa fa-stethoscope' id='staff' name='staff' type='select' dynamic=True options=staff required=True onLoadText='Select Doctor/Groomer' %}
+        {% include 'components/input.html' with icon='fa fa-calendar' id='date' name='date' type='date' value='' required=True onLoadText='Select Date' %}
+        {% include 'components/input.html' with icon='fa fa-clock' id='time' name='time' type='select' dynamic=True options=slots required=True onLoadText='Select Time' %}
+        {% include 'components/input.html' with icon='fa fa-comment-medical' id='description' name='description' type='textarea' placeholder='Description' %}
+        <script>
+            $(document).ready(function() {
+                function fetchSlots() {
+                    var type = $('#type').val();
+                    var date = $('#date').val();
+                    var staff = $('#staff').val();
+                    
+                    var timeSelect = $('#time');
+                    timeSelect.empty();
+                    timeSelect.append($('<option></option>').attr('value', '').text('Select Time').prop('hidden', true).prop('selected', true).prop('disabled', true));
+
+                    if (!type && (staff || date)) {
+                        toastr.error('Please select a type first');
+                        return;
+                    }
+
+                    if (type && !staff && date) {
+                        toastr.error('Please select a staff first');
+                        return;
+                    }
+
+                    if (type && date && staff) {
+                        $.ajax({
+                            url: '{% url "vcmsapp:get-slots-customer" %}',
+                            method: 'POST',
+                            data: {
+                                'csrfmiddlewaretoken': '{{csrf_token}}',
+                                'type': type,
+                                'date': date,
+                                'staff': staff
+                            },
+                            dataType: 'json',
+                            success: function(data) {
+                                timeSelect.append($('<option></option>').attr('value', '').text('Select Time').prop('hidden', true).prop('selected', true).prop('disabled', true));
+                                $.each(data.slots, function(key, value) {
+                                    timeSelect.append($('<option></option>').attr('value', value.id).text(value.time));
+                                    console.log(value.time);
+                                });
+                            }
+                        });
+                    }
+                }
+
+                $('#type, #date, #staff').change(fetchSlots);
+            });
+
+            const type = document.getElementById('type'); // error because js doesn't recognise django tags
+            const staff = document.getElementById('staff');
+            const date = document.getElementById('date');
+            const time = document.getElementById('time');
+
+            time.addEventListener('click', function() {
+                if (type.value === ''){
+                    toastr.error('Please select an appointment type first');
+                } else if (staff.value === '') {
+                    toastr.error('Please select a doctor/groomer first');
+                } else if (date.value === ''){
+                    toastr.error('Please select a date first');
+                }
+            });
+        </script>
+    {% elif form == 'staff' %}
+        {% include 'components/input.html' with icon='fa fa-user' id='customer' name='customer' type='select' dynamic=True options=customers required=True onLoadText='Select Customer' %}
+        {% include 'components/input.html' with icon='fa fa-paw' id='pet' name='pet' type='select' dynamic=True options=pets required=True onLoadText='Select Pet' %}
+        {% include 'components/input.html' with icon='bi bi-clipboard2-pulse' id='type' name='type' type='select' dynamic=True options=types required=True onLoadText='Select Appointment Type' %}
+        {% include 'components/input.html' with icon='fa fa-calendar' id='date' name='date' type='date' value='' required=True onLoadText='Select Date' %}
+        {% include 'components/input.html' with icon='fa fa-clock' id='time' name='time' type='select' dynamic=True options=slots required=True onLoadText='Select Time' %}
+        {% include 'components/input.html' with icon='fa fa-comment-medical' id='description' name='description' type='textarea' rows='4' placeholder='Description' %}
+
+        <script>
+            $(document).ready(function() {
+                $('#customer').change(function() {
+                    var customerData = $(this).val();
+                    $.ajax({
+                        url: '{% url "vcmsapp:get-pets" %}',
+                        method: 'POST',
+                        data: {
+                            'csrfmiddlewaretoken': '{{csrf_token}}',
+                            'customer_data': customerData
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            var petSelect = $('#pet');
+                            petSelect.empty();
+                            petSelect.append($('<option></option>').attr('value', '').text('Select Pet').prop('hidden', true).prop('selected', true).prop('disabled', true));
+                            $.each(data.pets, function(key, value) {
+                                petSelect.append($('<option></option>').attr('value', value.id).text(value.name));
+                            });
+                        }
+                    });
+                });
+                function fetchSlots() {
+                    var type = $('#type').val();
+                    var date = $('#date').val();
+                    
+                    var timeSelect = $('#time');
+                    timeSelect.empty();
+                    timeSelect.append($('<option></option>').attr('value', '').text('Select Time').prop('hidden', true).prop('selected', true).prop('disabled', true));
+
+                    if (!type && date) {
+                        toastr.error('Please select a type first');
+                        return;
+                    }
+
+                    if (type && date) {
+                        $.ajax({
+                            url: '{% url "vcmsapp:get-slots-staff" %}',
+                            method: 'POST',
+                            data: {
+                                'csrfmiddlewaretoken': '{{csrf_token}}',
+                                'type': type,
+                                'date': date
+                            },
+                            dataType: 'json',
+                            success: function(data) {
+                                timeSelect.append($('<option></option>').attr('value', '').text('Select Time').prop('hidden', true).prop('selected', true).prop('disabled', true));
+                                $.each(data.slots, function(key, value) {
+                                    timeSelect.append($('<option></option>').attr('value', value.id).text(value.time));
+                                });
+                            }
+                        });
+                    }
+                }
+
+                $('#type, #date').change(fetchSlots);
+            });
+
+            const customer = document.getElementById('customer');
+            const pet = document.getElementById('pet');
+            const time = document.getElementById('time');
+
+            pet.addEventListener('click', function() {
+                if (customer.value === ''){
+                    toastr.error('Please select a customer first');
+                }
+            })
+
+            time.addEventListener('click', function() {
+                if (type.value === ''){
+                    toastr.error('Please select an appointment type first');
+                } else if (date.value === ''){
+                    toastr.error('Please select a date first');
+                }
+            });
+        </script>
+    {% endif %}
+{% endblock %}
+
+<!-- pet /-->
+<!-- appointment date /-->
+<!-- appointment time /-->
+<!-- appointment type /-->
+<!-- doctor/groomer depending on the appointment type /-->

@@ -1,0 +1,67 @@
+{% extends 'Base.html' %}
+
+{% block title %}Staff List{% endblock %}
+
+{% block content %}
+<div style="padding: 0%;">
+    <div class="row mb-3" style="margin-left: auto;">
+        <div class="col-6">
+            <h1 style="font-weight: bold;">
+                Staff
+            </h1>
+        </div>
+        <div class="col-3"></div>
+        <div class="col-3">
+            {% url 'vcmsapp:register-staff' admin_id=admin.id as url %}
+            {% include 'components/anchor-button.html' with url=url text="Register Staff" %}
+        </div>
+    </div>
+    {% if query %}
+        {% include 'components/search.html' with placeholder="Search by Staff Name" search_width_col="5" query=query %}
+    {% else %}
+        {% include 'components/search.html' with placeholder="Search by Staff Name" search_width_col="5" %}
+    {% endif %}    
+    <div class="row" style="height: fit-content; width: 100%; margin-left: auto;">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Staff No.</th>
+                    <th>Email</th>
+                    <th>First Password</th>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>Role</th>
+                    <th>View</th>
+                </tr>
+            </thead>
+                {% for page in pages %}
+                    <tbody id="body{{page.number}}" {% if page.number != 1 %}hidden{% endif %}>
+                        {% for data in page %}
+                            <tr style="cursor: pointer;">
+                                {% if page.has_previous %}
+                                    {% widthratio 10 1 page.previous_page_number as count %}
+                                    <td>{{forloop.counter|add:count}}</td>
+                                {% else %}
+                                    <td>{{forloop.counter}}</td>
+                                {% endif %}
+                                <td>{{data.staff_no}}</td>
+                                <td>{{data.email}}</td>
+                                <td>{{data.password}}</td>
+                                <td>{{data.name}}</td>
+                                <td>{{data.gender}}</td>
+                                <td>{{data.role}}</td>
+                                <td>
+                                    {% url 'vcmsapp:view-staff' admin_id=admin.id staff_no=data.staff_no as url %}                                    
+                                    {% include 'components/icon-button.html' with anchor=True url=url icon='fa fa-eye' title='View' %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                {% endfor %}
+        </table>
+        {% include 'components/pagination.html' with pages=pages %}
+    </div>
+</div>
+
+{% endblock %}

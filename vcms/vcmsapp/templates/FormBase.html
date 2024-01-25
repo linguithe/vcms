@@ -1,0 +1,53 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'dropzone/dropzone.css' %}" />
+<script src="{% static 'dropzone/dropzone.js' %}"></script>
+<style>
+    .form{
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #E5E5E5;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+    .form-control:focus{
+        box-shadow: none;
+    }
+    button[type="submit"] {
+        width: 100%;
+        padding: 8px;
+        border: none;
+        border-radius: 4px;
+        background-color: #FFE97F;
+        color: black;
+    }
+    button[type="submit"]:hover {
+        background-color: #FFD300;
+    }
+    select,input,textarea:focus{
+        outline: none;
+    }
+</style>
+<!-- error caused buy css not understanding django tags -->
+<div class="form" style="width: {% block width %}{% endblock %};">
+    <div class="mx-2">
+        <div class="row" style="height: 100%;">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <h2>{{title}}</h2><br>
+                <form method="post" id="{% block id %}{% endblock %}" {% if action %}action="{% block action %}{% endblock %}"{% endif %}>
+                    {% csrf_token %}
+                    {% block content %}{% endblock %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

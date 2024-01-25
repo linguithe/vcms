@@ -1,0 +1,102 @@
+<style>
+    .pagination{
+        display: inline-block;
+        text-align: center;
+        font-size: 1.5vw;
+    }
+    .pagination button{
+        border-color: transparent;
+        border-radius: 50%;
+        background-color: transparent;
+        transition: background-color .3s;
+        width: 40px;
+        height: 40px;
+    }
+    .pagination button.active{
+        background-color: #FFF7D0;
+        color: black;
+        border-radius: 50%;
+    }
+    .pagination button:hover{
+        background-color: #FFD300;
+    }
+</style>
+<div class="row pb-3">
+    <div class="col-4"></div>
+    <div class="col-4 pagination" id="pagination">
+        <button type="button" id="prev" onclick="prevPage()">&laquo;</button>
+        {% for p in pages.page_range %}
+            <button type="button" id="page{{p}}" class="{% if p == 1 %}active{% endif %} page-number" onclick="togglePage('{{p}}')">
+                {{p}}
+            </button>
+        {% endfor %}
+        <button type="button" id="next" onclick="nextPage()">&raquo;</button>
+    </div>
+</div>
+<script>
+    let currentPage = 1;
+    let maxPage = {{ pages.num_pages }};
+    let visiblePages = 5;
+
+    function updatePagination() {
+        const pagination = document.getElementById('pagination');
+        const nextButton = document.getElementById('next');
+
+        // Clear existing page number buttons
+        const pageNumberButtons = pagination.getElementsByClassName('page-number');
+        while (pageNumberButtons[0]) {
+            pageNumberButtons[0].parentNode.removeChild(pageNumberButtons[0]);
+        }
+
+        // Calculate start and end page numbers
+        let startPage = Math.max(1, currentPage - Math.floor(visiblePages / 2));
+        let endPage = Math.min(maxPage, startPage + visiblePages - 1);
+        startPage = Math.max(1, endPage - visiblePages + 1);
+
+        // Create page buttons
+        for (let i = startPage; i <= endPage; i++) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'page-number';
+            button.id = 'page' + i;
+            button.onclick = function() { togglePage(i); };
+            button.textContent = i;
+            if (i === currentPage) {
+                button.classList.add('active');
+            }
+            pagination.insertBefore(button, nextButton);
+        }
+
+        const pages = document.querySelectorAll('[id^=body]');
+        for (let i = 0; i < pages.length; i++) {
+            pages[i].hidden = true;
+        }
+
+        const currentBody = document.getElementById('body' + currentPage);
+        if (currentBody) {
+            currentBody.hidden = false;
+        }
+    }
+
+    function nextPage() {
+        if (currentPage < maxPage) {
+            currentPage++;
+            updatePagination();
+        }
+    }
+
+    function prevPage() {
+        if (currentPage > 1) {
+            currentPage--;
+            updatePagination();
+        }
+    }
+
+    function togglePage(page) {
+        currentPage = page;
+        updatePagination();
+    }
+
+    // Initialize pagination
+    updatePagination();
+</script>

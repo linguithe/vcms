@@ -1,0 +1,165 @@
+{% extends 'Base.html' %}
+
+{% block title %}View Appointment | {{appointment.pet}} at {{appointment.time}}{% endblock %}
+
+{% block content %}
+<div class="row" style="padding: 0%; height: fit-content;">
+    <div class="row mb-3" style="margin-left: auto; display: flex;">
+        <div class="col-8">
+            <h1 style="font-weight: bold;">
+                Appointment at {{appointment.start_time}} for {{appointment.pet}}
+            </h1>
+        </div>
+        <div class="col-1 position-relative">
+            {% if change_request %}
+                {% include 'components/icon-button.html' with anchor=True url='#' icon='fa fa-bullhorn' title='Change Request' modal=True modal_id='changesModal' color='red' %}
+            {% else %}
+                {% include 'components/icon-button.html' with anchor=True url='#' icon='fa fa-bullhorn' title='Change Request' modal=True modal_id='changesModal' %}
+            {% endif %}
+        </div>
+        <div class="col-3">
+            {% if user.role == 'Staff' %}
+                {% if appointment.is_today %}
+                    {% if not has_medical_notes %}
+                        {% url 'vcmsapp:medical-notes' appointment_id=appointment.id as url %}
+                        {% include 'components/anchor-button.html' with url=url text='Medical Notes' %}
+                    {% endif %}
+                {% endif %}
+            {% else %}
+                {% include 'components/anchor-button.html' with url='#' text="Cancel Appointment" id='deleteBtn' modal_toggle=True modal_id='cancelModal' %}
+            {% endif %}
+        </div>
+    </div>
+    <hr style="border-top: thin solid lightgrey; opacity: 0.2;">
+</div>
+<div class="row mb-3" style="height: fit-content; width: 100%; margin-left: auto;">
+    <div class="col-3"></div>
+    <div class="col-6">
+        {% if user.role == 'Customer' %}
+            {% include 'details/ViewAppointmentDetails.html' with detail='customer' %}
+        {% elif user.role == 'Staff' %}
+            {% include 'details/ViewAppointmentDetails.html' with detail='staff' %}
+        {% endif %}
+    </div>
+</div>
+{% if user.role == 'Customer' %}
+    {% url 'vcmsapp:customer' customer_id=customer.id as url %}
+    {% include 'components/edit-detail-buttons.html' with form_id='editAppointmentForm' url=url exclude_fields='dateDiv,timeDiv,staffNameDiv,typeDiv' %}
+{% elif user.role == 'Staff' %}
+    {% url 'vcmsapp:staff' staff_id=staff.id as url %}
+    {% include 'components/edit-detail-buttons.html' with form_id='editAppointmentForm' url=url exclude_fields='dateDiv,timeDiv,customerNameDiv,typeDiv' %}
+{% endif %}
+
+<!-- Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="cancelModalLabel">Cancel Confirmation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure to cancel?</h4>
+            </div>
+            <div class="modal-footer">
+                <div class="row" style="width: 100%;">
+                    <div style="display: flex; justify-content: center;">
+                        <div class="col-5 mx-2">
+                            {% include 'components/anchor-button.html' with url='#' text='Back' modal_dismiss=True %}
+                        </div>
+                        <div class="col-5 mx-2">
+                            <form action="{% if user.role == 'Staff' %}{% url 'vcmsapp:cancel-appointment-staff' staff_id=staff.id %}{% elif user.role == 'Customer' %}{% url 'vcmsapp:cancel-appointment-customer' customer_id=customer.id %}{% endif %}" method="post" id="cancelAppointmentForm">
+                                {% csrf_token %}
+                                {% include 'components/input.html' with type='hidden' id='appointment_id' name='appointment_id' value=appointment.id %}
+                                {% include 'components/anchor-button.html' with url='#' text='Cancel Appointment' id='cancelAppointmentBtn' %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if attributes %}
+<div class="modal fade" id="changesModal" tabindex="-1" aria-labelledby="changesModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="changesModalLabel">Changes</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% for key, value in attributes.items %}
+                    {% if value.0 != value.1 %}
+                        <div class="row">
+                            <div class="col-4">
+                                <h4>{{key}}</h4>
+                            </div>
+                            <div class="col-8">
+                                <h4>{{value.0}} -> {{value.1}}</h4>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="modal-footer">
+                <div class="row" style="width: 100%;">
+                    <div style="display: flex; justify-content: center;">
+                        <div class="col-3 mx-2">
+                            {% include 'components/anchor-button.html' with url='#' text='Back' modal_dismiss=True %}
+                        </div>
+                        <div class="col-3 mx-2">
+                            <form action="{% url 'vcmsapp:accept-reject-changes' %}" method="post" id="rejectChangesForm">
+                                {% csrf_token %}
+                                {% include 'components/input.html' with type='hidden' id='appointment_id' name='appointment_id' value=appointment.id %}
+                                {% include 'components/input.html' with type='hidden' id='decision' name='decision' value='reject' %}
+                                {% include 'components/anchor-button.html' with url='#' text='Reject Changes' id='rejectChangesBtn' %}
+                            </form>
+                        </div>
+                        <div class="col-3 mx-2">
+                            <form action="{% url 'vcmsapp:accept-reject-changes' %}" method="post" id="acceptChangesForm">
+                                {% csrf_token %}
+                                {% include 'components/input.html' with type='hidden' id='appointment_id' name='appointment_id' value=appointment.id %}
+                                {% include 'components/input.html' with type='hidden' id='decision' name='decision' value='accept' %}
+                                {% include 'components/anchor-button.html' with url='#' text='Accept Changes' id='acceptChangesBtn' %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<script>
+    var cancelAppointmentBtn = document.getElementById('cancelAppointmentBtn');
+    var acceptChangesBtn = document.getElementById('acceptChangesBtn');
+    var rejectChangesBtn = document.getElementById('rejectChangesBtn');
+
+    cancelAppointmentBtn.addEventListener('click', function() {
+        var cancelAppointmentForm = document.getElementById('cancelAppointmentForm');
+        if (cancelAppointmentForm.reportValidity()) {
+            cancelAppointmentForm.submit();
+        }
+    });
+
+    if (acceptChangesBtn) {
+        acceptChangesBtn.addEventListener('click', function() {
+            var acceptChangesForm = document.getElementById('acceptChangesForm');
+            if (acceptChangesForm.reportValidity()) {
+                acceptChangesForm.submit();
+            }
+        });
+    }
+
+    if (rejectChangesBtn) {
+        rejectChangesBtn.addEventListener('click', function() {
+            var rejectChangesForm = document.getElementById('rejectChangesForm');
+            if (rejectChangesForm.reportValidity()) {
+                rejectChangesForm.submit();
+            }
+        });
+    }
+</script>
+{% endblock %}

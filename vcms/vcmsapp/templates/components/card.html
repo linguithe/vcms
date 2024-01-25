@@ -1,0 +1,36 @@
+<style>
+    .card{
+        border-radius: 10px;
+        border: none;
+        background-color: #FFE97F;
+    }
+</style>
+<a href="{{url}}">
+    <div class="card">
+        <div class="card-header">
+            <span class="fa fa-circle" style="color: {{color}}"></span>
+            {{header}}
+        </div>
+        {% if image %}
+            <img src="{{MEDIA_ROOT}}{{image}}" class="card-img-top" alt="{{alt}}">
+        {% endif %}
+        <div class="card-body">
+            {% if title %}
+                <h5 class="card-title">
+                    {{title}}
+                </h5>
+            {% endif %}
+            {% if label %}
+                <label class="card-text">
+                    {{label}}
+                </label>
+            {% endif %}
+        </div>
+        {% if list %}
+            <ul class="list-group list-group-flush">
+                {{list}}
+            </ul>
+        {% endif %}
+    </div>
+
+</a>    

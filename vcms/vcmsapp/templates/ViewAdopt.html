@@ -1,0 +1,41 @@
+{% extends 'Base.html' %}
+
+{% block title %}View Animal{% endblock %}
+
+{% block content %}
+<div class="row" style="padding: 0%; height: fit-content;">
+    <div class="row mb-3" style="margin-left: auto;">
+        <h1 style="font-weight: bold;">
+            {{pet.name}}
+        </h1>
+        <hr style="border-top: thin solid lightgrey; opacity: 0.2;">
+    </div>
+</div>
+<div class="row mb-3" style="height: fit-content; width: 100%; margin-left: auto;">
+    <div class="col-3"></div>
+    <div class="col-6">
+        <div class="form-container">
+            {% include 'details/ViewAdoptDetails.html' %}
+            {% if image %}
+                {% url 'vcmsapp:delete-adopt-image' pet_id=pet.id as url %}
+                {% include 'components/img.html' with image_url=image delete_url=url disabled=True %}
+            {% else %}
+                {% url 'vcmsapp:upload-adopt-image' as upload_url %}
+                {% url 'vcmsapp:remove-adopt-image' as remove_url %}
+                {% include 'components/dropzone.html' with upload_url=upload_url remove_url=remove_url disabled=True image_for=pet.name %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% if staff %}
+    {% url 'vcmsapp:adopt' as url %}
+    {% include 'components/edit-detail-buttons.html' with form_id='editAdoptForm' url=url %}
+{% elif customer %}
+<div class="row pb-3" style="display: flex; align-items: center; justify-content: center; margin-left: auto;">
+    <div class="col-4">
+        {% url 'vcmsapp:adopt' as url %}
+        {% include 'components/anchor-button.html' with url=url text="Back" %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

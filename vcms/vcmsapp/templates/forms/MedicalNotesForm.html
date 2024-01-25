@@ -1,0 +1,16 @@
+{% extends 'FormBase.html' %}
+
+{% block width %}100%{% endblock %}
+
+{% block id %}medicalNotesForm{% endblock %}
+
+{% block action %}{% url 'vcmsapp:medical-notes' appointment_id=appointment.id %}{% endblock %}
+
+{% block content %}
+    {% include 'components/input.html' with icon='fa fa-file-prescription' id='notes' name='notes' placeholder='Notes' type='textarea' rows='8' required=True %}
+    {% include 'components/input.html' with icon='fa fa-pills' id='prescription' name='prescription' placeholder='Prescription' type='textarea' rows='8' required=True %}
+
+    <script>
+
+    </script>
+{% endblock %}

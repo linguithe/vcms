@@ -1,0 +1,81 @@
+{% extends 'LoginBase.html' %}
+
+{% load static %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="register-form">
+    <div class="mx-2">
+        <div class="row" style="height: 100%;">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <h2>Register</h2><br>
+                <form method="post">
+                    {% csrf_token %}
+                    {% include 'components/input.html' with icon='fa fa-user' type='text' id='name' name='name' placeholder='Name' value='' required=True %}
+                    {% with options='<option selected disabled hidden value="">Gender</option><option value="Male">Male</option><option value="Female">Female</option>' %}
+                        {% include 'components/input.html' with icon='fa fa-venus-mars' type='select' id='gender' name='gender' required=True %}
+                    {% endwith %}
+                    {% include 'components/input.html' with icon='fa fa-phone' type='text' id='phone' name='phone' placeholder='Phone Number' value='' required=True %}
+                    {% include 'components/input.html' with icon='fa fa-home' type='text' id='address' name='address' placeholder='Address' value='' required=True %}
+                    {% include 'components/input.html' with icon='fa fa-calendar' type='date' id='dob' name='dob' placeholder='Date of Birth' value='' required=True %}
+                    
+                    <hr class="my-4" style="border-top: thin solid grey; opacity: 0.2;">
+
+                    {% include 'components/input.html' with icon='fa fa-at' type='email' id='email' name='email' placeholder='Username (Email)' value='' required=True %}
+                    {% include 'components/input.html' with icon='fa fa-lock' type='password' id='password' name='password' placeholder='Password' value='' required=True icon_id='eye' %}
+                    {% include 'components/input.html' with icon='fa fa-lock' type='password' id='confirmPassword' name='confirmPassword' placeholder='Confirm Password' value='' required=True %}
+                    
+                    <br>
+                    <div class="mb-3">
+                        <button type="submit" style="border-radius: 10px;">Register</button>
+                    </div>
+                    <div class="my-2">
+                        <label style="font-size: smaller;">
+                            Login to an existing account
+                        </label>
+                    </div>
+                    <div>
+                        {% url 'vcmsapp:login' as url %}
+                        {% include 'components/anchor-button.html' with url=url text='Login' %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/field_validators.js' %}"></script>
+<script>
+    const show = document.getElementById('show');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const name = document.getElementById('name');
+    const dob = document.getElementById('dob');
+
+    if (show) {
+        show.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            const eye = document.getElementById('eye');
+            if (password.type === 'password') {
+                password.type = 'text';
+                confirmPassword.type = 'text';
+                eye.classList.remove('fa-eye');
+                eye.classList.add('fa-eye-slash');
+                show.title = 'Hide Password';
+            } else {
+                password.type = 'password';
+                confirmPassword.type = 'password';
+                eye.classList.remove('fa-eye-slash');
+                eye.classList.add('fa-eye');
+                show.title = 'Show Password';
+            }
+        });
+    }
+
+    validate_name();
+    validate_dob();
+    validate_password();
+</script>
+{% endblock %}

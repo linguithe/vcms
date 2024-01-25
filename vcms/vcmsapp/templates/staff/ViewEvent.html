@@ -1,0 +1,68 @@
+{% extends 'Base.html' %}
+
+{% block title %}View Slot | {{date}}{% endblock %}
+
+{% block content %}
+<div class="row" style="padding: 0%; height: fit-content;">
+    <div class="row mb-3" style="margin-left: auto;">
+        <div class="col-10">
+            <h1 style="font-weight: bold;">
+                View Slot | {{date}}
+            </h1>
+        </div>
+        <div class="col-2">
+            {% include 'components/anchor-button.html' with url='#' text="Remove Slot" id='deleteBtn' modal_toggle=True modal_id='removeModal' %}
+        </div>
+    </div>
+    <hr style="border-top: thin solid lightgrey; opacity: 0.2;">
+</div>
+<div class="row mb-3" style="height: fit-content; width: 100%; margin-left: auto;">
+    <div class="col-3"></div>
+    <div class="col-6">
+        {% include 'details/ViewEventDetails.html' %}
+    </div>
+</div>
+{% url 'vcmsapp:slot' staff_id=staff.id as url %}
+{% include 'components/edit-detail-buttons.html' with form_id='editSlotForm' url=url %}
+
+<!-- Modal -->
+<div class="modal fade" id="removeModal" tabindex="-1" aria-labelledby="removeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="removeModalLabel">Remove Confirmation</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure to remove this slot?</h4>
+            </div>
+            <div class="modal-footer">
+                <div class="row" style="width: 100%;">
+                    <div style="display: flex; justify-content: center;">
+                        <div class="col-5 mx-2">
+                            {% include 'components/anchor-button.html' with url='#' text='Back' modal_dismiss=True %}
+                        </div>
+                        <div class="col-5 mx-2">
+                            <form action="{% url 'vcmsapp:remove-slot' staff_id=staff.id slot_id=slot.id %}" method="post" id="removeSlotForm">
+                                {% csrf_token %}
+                                {% include 'components/input.html' with type='hidden' id='appointment_id' name='appointment_id' value=appointment.id %}
+                                {% include 'components/anchor-button.html' with url='#' text='Remove Slot' id='removeSlotBtn' %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var removeBtn = document.getElementById('removeSlotBtn');
+    var form = document.getElementById('removeSlotForm');
+
+    removeBtn.addEventListener('click', function() {
+        if (form.reportValidity()) {
+            form.submit();
+        }
+    });
+</script>
+{% endblock %}

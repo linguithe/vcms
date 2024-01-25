@@ -1,0 +1,20 @@
+<style>
+.form-control:focus {
+    box-shadow: none;
+}
+</style>
+<div class="row mb-3" style="margin-left: auto;">
+    <div class="col-{{search_width_col}}">
+        <form method="post">
+            {% csrf_token %}
+            <div class="input-group border rounded-pill" style="border-radius: 5%; border: solid thin black; padding: 1%;">
+                <input class="form-control" type="search" style="border: none; border-radius: 20%;" value="{% if query %}{{query}}{% endif %}" id="search" name="search" placeholder="{{placeholder}}">
+                <span class="input-group-append">
+                <button id="search-btn" class="btn btn-outline-secondary ms-n5" style="border: none; border-radius: 45%;" type="submit">
+                     <i class="bi bi-search"></i>
+                </button>
+                </span>
+           </div>
+        </form>
+    </div>
+</div>

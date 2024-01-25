@@ -1,0 +1,69 @@
+{% extends 'Base.html' %}
+
+{% block title %}Medical Notes | {{appointment.id}}{% endblock %}
+
+{% block content %}
+<div class="row" style="padding: 0%; height: fit-content;">
+    <div class="row mb-3" style="margin-left: auto;">
+        <h1 style="font-weight: bold;">
+            Add Medical Notes
+        </h1>
+        <hr style="border-top: thin solid lightgrey; opacity: 0.2;">
+    </div>
+</div>
+<div class="row mb-3" style="height: fit-content; width: 100%; margin-left: auto;">
+    <div class="col-3"></div>
+    <div class="col-6">
+        <label class="px-3 py-3 mb-3" style="background-color: #FFE97F; border-radius: 10px;">
+            NOTE: Please keep this page open during session to add any notes and necessary prescription. Once the form is submitted the data will be encrypted and stored, and CANNOT be edited.
+        </label>
+        {% include 'forms/MedicalNotesForm.html' %}
+    </div>
+</div>
+<div class="row pb-3" style="height: fit-content; width: 100%; margin-left: auto;">
+    <div class="col-3"></div>
+    <div class="col-3">
+        {% url 'vcmsapp:view-appointment-staff' appointment_id=appointment.id staff_id=staff.id as url %}
+        {% include 'components/anchor-button.html' with url=url text="Back" %}
+    </div>
+    <div class="col-3">
+        {% include 'components/anchor-button.html' with url='#' text="Add Medical Notes" id='submit' modal_toggle=True modal_id='submitModal' %}
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="submitModal" tabindex="-1" aria-labelledby="submitModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="submitModalLabel">Add Medical Notes</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure to add these medical notes? The notes cannot be edited once saved.</h4>
+            </div>
+            <div class="modal-footer">
+                <div class="row" style="width: 100%;">
+                    <div style="display: flex; justify-content: center;">
+                        <div class="col-5 mx-2">
+                            {% include 'components/anchor-button.html' with url='#' text='Back' modal_dismiss=True %}
+                        </div>
+                        <div class="col-5 mx-2">
+                            {% include 'components/anchor-button.html' with url='#' text='Add Medical Notes' id='submitBtn' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var submitBtn = document.getElementById('submitBtn');
+    var form = document.getElementById('medicalNotesForm');
+
+    submitBtn.addEventListener('click', function() {
+        if (form.reportValidity()) {
+            form.submit();
+        }
+    });
+</script>
+{% endblock %}

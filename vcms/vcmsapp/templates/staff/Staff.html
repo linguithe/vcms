@@ -1,0 +1,63 @@
+{% extends 'Base.html' %}
+
+{% block title %}Upcoming Appointments | {{staff.name}}{% endblock %}
+
+{% block content %}
+<div style="padding: 0%;">
+    <div class="row mb-3" style="margin-left: auto;">
+        <div class="col-6">
+            <h1 style="font-weight: bold;">
+                Upcoming Appointments
+            </h1>
+        </div>
+        <div class="col-3"></div>
+        <div class="col-3">
+            {% url 'vcmsapp:make-appointment-staff' staff_id=staff.id as url %}
+            {% include 'components/anchor-button.html' with url=url text="Add Appointment" %}
+        </div>
+    </div>
+    {% if query %}
+        {% include 'components/search.html' with placeholder="Search by Customer Name" search_width_col="5" query=query %}
+    {% else %}
+        {% include 'components/search.html' with placeholder="Search by Customer Name" search_width_col="5" %}
+    {% endif %}    
+    <div class="row" style="height: fit-content; width: 100%; margin-left: auto;">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Pet Name</th>
+                    <th>Customer</th>
+                    <th>Date & Time</th>
+                    <th>Appointment Type</th>
+                    <th>View</th>
+                </tr>
+            </thead>
+                {% for page in pages %}
+                    <tbody id="body{{page.number}}" {% if page.number != 1 %}hidden{% endif %}>
+                        {% for data in page %}
+                            <tr style="cursor: pointer;">
+                                {% if page.has_previous %}
+                                    {% widthratio 10 1 page.previous_page_number as count %}
+                                    <td>{{forloop.counter|add:count}}</td>
+                                {% else %}
+                                    <td>{{forloop.counter}}</td>
+                                {% endif %}
+                                <td>{{data.pet}}</td>
+                                <td>{{data.customer}}</td>
+                                <td>{{data.date}} {{data.start_time}} - {{data.end_time}}</td>
+                                <td>{{data.type}}</td>
+                                <td>
+                                    {% url 'vcmsapp:view-appointment-staff' appointment_id=data.id staff_id=staff.id as url %}                                    
+                                    {% include 'components/icon-button.html' with anchor=True url=url icon='fa fa-eye' title='View' %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                {% endfor %}
+        </table>
+        {% include 'components/pagination.html' with pages=pages %}
+    </div>
+</div>
+
+{% endblock %}

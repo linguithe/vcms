@@ -1,0 +1,112 @@
+{% extends 'Base.html' %}
+
+{% block title %}Slots | {{staff.name}}{% endblock %}
+
+{% block content %}
+<style>
+    .fc{
+        color: black;
+    }
+    .fc .fc-col-header-cell{
+        background-color: #FFE97F;
+    }
+    .fc .fc-col-header-cell-cushion{
+        text-decoration: none;
+        color: black;
+    }
+    .fc .fc-daygrid-day-number{
+        text-decoration: none;
+        color: black;
+    }
+    .fc-event{
+        cursor: pointer;
+    }
+    .fc-daygrid-day,
+    .fc-daygrid-day .fc-day-today{
+        cursor: pointer;
+    }
+    .fc-daygrid-day:hover,
+    .fc-daygrid-day .fc-day-today:hover{
+        background-color: #FFD300 !important;
+    }
+</style>
+
+<div style="padding: 0%;">
+    <div class="row mb-3" style="margin-left: auto;">
+        <div class="col-6">
+            <h1 style="font-weight: bold;">
+                Slots
+            </h1>
+        </div>
+    </div>  
+    <div class="row pb-3" style="height: fit-content; width: 100%; margin-left: auto;">
+        <div class="card">
+            <div class="card-body">
+                <div id="calendar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            themeSystem: 'bootstrap5',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            events: [
+                {% for event in events %} // errors because js doesn't understand django template tags but it's fine
+                    {
+                        title: '{{event.title}}',
+                        start: '{{event.start}}',
+                        end: '{{event.end}}',
+                        color: '{{event.end}}' < new Date().toISOString() ? 'gray' : '{{event.available}}' == 'True' ? 'green' : 'red',
+                    },
+                {% endfor %}
+            ],
+            dateClick: function(info) {
+                var clickedDate = new Date(info.dateStr);
+                var tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1); // Set the date to tomorrow
+                tomorrow.setHours(0, 0, 0, 0); // Set the time to 00:00:00.000
+
+                if (clickedDate < tomorrow) {
+                    toastr.error("Cannot select a date before tomorrow.");
+                } else {
+                    var dateUrl = "{% url 'vcmsapp:view-slot' staff_id=staff.id %}" + "?date=" + info.dateStr;
+                    window.location.href = dateUrl;
+                }
+            },
+            eventClick: function(info) {
+                var start = info.event.start;
+                var end = info.event.end;
+
+                var startStr = start.getFullYear() + '-' + (start.getMonth() + 1).toString().padStart(2, '0') + '-' + start.getDate().toString().padStart(2, '0') + 'T' + start.getHours().toString().padStart(2, '0') + ':' + start.getMinutes().toString().padStart(2, '0') + ':' + start.getSeconds().toString().padStart(2, '0');
+                var endStr = end.getFullYear() + '-' + (end.getMonth() + 1).toString().padStart(2, '0') + '-' + end.getDate().toString().padStart(2, '0') + 'T' + end.getHours().toString().padStart(2, '0') + ':' + end.getMinutes().toString().padStart(2, '0') + ':' + end.getSeconds().toString().padStart(2, '0');
+
+                var clickedDate = new Date(info.event.start);
+                clickedDate.setHours(0, 0, 0, 0); // Set the time to 00:00:00.000
+
+                var tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1); // Set the date to tomorrow
+                tomorrow.setHours(0, 0, 0, 0);
+
+                if (clickedDate < tomorrow) {
+                    toastr.error("Cannot select an event that starts before tomorrow.");
+                } else {
+                    var eventUrl = "{% url 'vcmsapp:view-event' staff_id=staff.id %}" + "?type=" + info.event.title + "&start=" + startStr + "&end=" + endStr;
+                    window.location.href = eventUrl;
+                }
+            }
+        });
+
+        calendar.render();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'EmailBase.html' %}
+
+{% block content %}
+    <div class="row" style="padding: 0%; height: fit-content;">
+        <div class="row mb-3" style="margin-left: auto;">
+            <h2 style="font-weight: bold; color: black;">
+                Appointment Reminder
+            </h2>
+            <hr style="border-top: thin solid lightgrey; opacity: 0.2;">
+        </div>
+    </div>
+    <div class="row mb-3" style="height: fit-content; width: 100%; margin-left: auto;">
+        <div class="col-3"></div>
+        <div class="col-6" style="display: flex;">
+            <p style="color: black;">
+                Dear {{ customer.name }}, the appointment for {{ pet.name }} is coming in {{days}} days. <a href="{{login_url}}">Login</a> to your account to view the appointment details.
+            </p>
+        </div>
+    </div>
+{% endblock %}

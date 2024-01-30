@@ -4,6 +4,8 @@ import re
 import secrets
 import string
 import base64
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 from django.contrib import messages
 from django.core import serializers
 from django.core.paginator import Paginator
@@ -218,3 +220,16 @@ def redirect_view_appointment_customer(**kwargs):
     customer_id = kwargs.get('customer_id', None)
     if appointment_id:
         return redirect('vcmsapp:view-appointment-customer', customer_id=customer_id, appointment_id=appointment_id)
+    
+# Generate private key for customers
+def generate_private_key():
+    private_key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=2048,
+    )
+    pem = private_key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption(),
+    )
+    return pem

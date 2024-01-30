@@ -15,25 +15,17 @@ def send():
         )
 
         for appointment in appointments:
-            days = (datetime.strptime(appointment.sssm.ssm.schedule.date, '%Y-%m-%d').date() - datetime.now().date()).days
+            days = (datetime.strptime(appointment.sssm.ssm.schedule.date, '%Y-%m-%d').date() - datetime.now().date()).days - 1
             if days == 1:
-                AddEntity(
-                    None, EmailQueue, None,
-                    to=appointment.customer.user.email,
-                    module='ReminderEmail_1_' + appointment.pet.name,
-                )
-            elif days == 3:
-                AddEntity(
-                    None, EmailQueue, None,
-                    to=appointment.customer.user.email,
-                    module='ReminderEmail_3_' + appointment.pet.name,
-                )
-            elif days == 7:
-                AddEntity(
-                    None, EmailQueue, None,
-                    to=appointment.customer.user.email,
-                    module='ReminderEmail_7_' + appointment.pet.name,
-                )
+                if not EmailQueue.objects.filter(
+                    module='ReminderEmail_1_' + appointment.pet.name + '_' + str(appointment.id),
+                    void=False
+                ).exists():
+                    AddEntity(
+                        None, EmailQueue, None,
+                        to=appointment.customer.user.email,
+                        module='ReminderEmail_1_' + appointment.pet.name + '_' + str(appointment.id),
+                    )
 
         emails = EmailQueue.objects.filter(
             is_sent=False,
